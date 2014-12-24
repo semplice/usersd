@@ -46,7 +46,7 @@ class User(usersd.objects.BaseObject):
 	polkit_policy = "org.semplicelinux.usersd.modify-user"
 	
 	@staticmethod
-	def add(user, password, fullname, shell="/bin/bash"):
+	def add(user, fullname, shell="/bin/bash"):
 		"""
 		This static method adds a new user, using the useradd command.
 		The arguments are self-explanatory.
@@ -64,7 +64,6 @@ class User(usersd.objects.BaseObject):
 			"-m", # Create home directory
 			"-U", # Create user group
 			"-c", "%s,,,," % fullname, # Fullname
-			"-p", password, # Password
 			"-s", shell, # Shell
 		)):
 			return True

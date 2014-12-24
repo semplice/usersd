@@ -100,12 +100,12 @@ class Usersd(usersd.objects.BaseObject):
 
 	@usersd.objects.BaseObject.outside_timeout(
 		"org.semplicelinux.usersd.user",
-		in_signature="sss",
+		in_signature="ss",
 		out_signature="b",
 		sender_keyword="sender",
 		connection_keyword="connection"
 	)
-	def CreateUser(self, user, password, fullname, sender, connection):
+	def CreateUser(self, user, fullname, sender, connection):
 		"""
 		This method returns the object path for the given user.
 		"""
@@ -118,7 +118,7 @@ class Usersd(usersd.objects.BaseObject):
 		):
 			raise Exception("E: Not authorized")
 		
-		return usersd.user.User.add(user, password, fullname)
+		return usersd.user.User.add(user, fullname)
 		
 	
 if __name__ == "__main__":
