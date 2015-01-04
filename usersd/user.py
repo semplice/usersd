@@ -74,14 +74,14 @@ class User(usersd.objects.BaseObject):
 		if not.
 		"""
 		
-		if not subprocess.call((
+		if subprocess.call((
 			"useradd",
 			user,
 			"-m", # Create home directory
 			"-U", # Create user group
 			"-c", "%s,,,," % fullname, # Fullname
 			"-s", shell, # Shell
-		)):
+		)) == 0:
 			return True
 		else:
 			return False
