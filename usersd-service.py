@@ -61,7 +61,11 @@ class Usersd(usersd.objects.BaseObject):
 				
 		with open("/etc/passwd", "r") as f:
 			for user in f:
-				self._users[user.split(":")[0]] = usersd.user.User(self.bus_name, user.strip())
+				if not user.split(":")[0] in self._users:
+					self._users[user.split(":")[0]] = usersd.user.User(
+						self.bus_name,
+						user.strip()
+					)
 	
 	@usersd.objects.BaseObject.outside_timeout(
 		"org.semplicelinux.usersd.user",
@@ -118,7 +122,11 @@ class Usersd(usersd.objects.BaseObject):
 		):
 			raise Exception("E: Not authorized")
 		
-		return usersd.user.User.add(user, fullname)
+		result = usersd.user.User.add(user, fullname)
+		
+		if result:
+			# User created successfully, we should refresh the user list
+			self._generate_users()
 		
 	
 if __name__ == "__main__":
