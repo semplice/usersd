@@ -21,58 +21,55 @@
 #    Eugenio "g7" Paolantonio <me@medesimo.eu>
 #
 
+from gi.repository import Gtk, GObject
+
 import quickstart
 
 @quickstart.builder.from_file("./usersd/usersd.glade")
 class ChangePasswordDialog:
 	
 	"""
-	The ChangePasswordDialog is the dialog that the user will get when
-	trying to change password.
-	
-	We do not require clients to send us the (hashed) passwords as they may
-	be sniffed with a simple dbus monitor.
-	
-	Using this method, the passwords will remain in this application, and aren't
-	sent anywhere.
+	The usersd user interface
 	"""
 	
 	events = {
-		"clicked" : ("close_button", "continue_button"),
+	
 	}
 	
-	def show(self, user):
+	def __getattr__(self, key):
 		"""
-		Shows the dialog.
-		"""
-		
-		self.objects.main.present()
-	
-	def clear_and_hide(self):
-		"""
-		Clears entries and hides things.
-		"""
-
-		self.objects.main.destroy()
-	
-	def on_close_button_clicked(self, button):
-		"""
-		Fired when the Close button has been clicked.
+		Proxy to the internal change_password_dialog.
 		"""
 		
-		self.clear_and_hide()
+		return getattr(self.objects.change_password_dialog, key)
 	
-	def on_continue_button_clicked(self, button):
+	def show_error(self, message):
 		"""
-		Fired when the Continue button has been clicked.
+		Shows an error message.
 		"""
 		
-		self.clear_and_hide()
+		self.objects.error_message.set_text(message)
+		GObject.idle_add(self.objects.error_revealer.set_reveal_child, True)
+	
+	def hide_error(self):
+		"""
+		Hides the error message.
+		"""
+		
+		GObject.idle_add(self.objects.error_revealer.set_reveal_child, False)
 	
 	def __init__(self):
 		"""
-		Initialization.
+		Initializes the class.
 		"""
 		
-		quickstart.events.connect(self)
+		# Add buttons
+		self.objects.change_password_dialog.add_buttons(
+			"Cancel",
+			Gtk.ResponseType.CANCEL,
+			"Change",
+			Gtk.ResponseType.OK
+		)
+		self.objects.change_password_dialog.set_default_response(Gtk.ResponseType.OK)
 		
+		quickstart.events.connect(self)

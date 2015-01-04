@@ -22,9 +22,25 @@
 #
 
 import usersd.objects
+import usersd.ui
 import subprocess
 
 from usersd.common import is_authorized, get_user
+
+from gi.repository import Gtk
+
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=[
+	"md5_crypt",
+	"bcrypt",
+	"sha1_crypt",
+	"sun_md5_crypt",
+	"sha256_crypt",
+	"sha512_crypt",
+])
+
+default_encryption = "sha512_crypt"
 
 class User(usersd.objects.BaseObject):
 	"""
@@ -92,8 +108,50 @@ class User(usersd.objects.BaseObject):
 		if not get_user(sender) in (0, self.uid):
 			raise Exception("E: Unable to change the password from another user")
 		
-		usersd.ui.ChangePasswordDialog().show(self)
+		# Create changepassword dialog
+		change_password_dialog = usersd.ui.ChangePasswordDialog()
+		
+		# Connect response
+		change_password_dialog.connect("response", self.on_change_password_dialog_response, change_password_dialog)
+		
+		change_password_dialog.run()
 
+	def on_change_password_dialog_response(self, dialog, response, parent):
+		"""
+		Fired when a button on the change_password_dialog has been clicked.
+		"""
+		
+		if response == Gtk.ResponseType.OK:
+			# Verify old password
+			if not self.verify_password(parent.objects.old_password.get_text()):
+				parent.show_error("Current password is not correct.")
+				return False
+			
+			# Verify new passwords
+			if not parent.objects.new_password.get_text() == parent.objects.confirm_password.get_text():
+				parent.show_error("The new passwords do not match.")
+				return False
+			
+			parent.hide_error()
+			
+		# Destroy the window
+		dialog.destroy()
+
+	def verify_password(self, oldpassword):
+		"""
+		Returns True if the password is verified, False otherwise.
+		"""
+		
+		status = False
+		with open("/etc/shadow", "r") as f:
+			for line in f:
+				splt = line.split(":")
+				if splt[0] == self.user:
+					status = pwd_context.verify(oldpassword, splt[1])
+					break
+		
+		splt = None
+		return status
 	
 	def change_password(self, newpassword, oldpassword=None):
 		"""
