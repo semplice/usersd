@@ -42,6 +42,8 @@ pwd_context = CryptContext(schemes=[
 
 default_encryption = "sha512_crypt"
 
+MIN_PASSWORD_LENGTH = 4
+
 class User(usersd.objects.BaseObject):
 	"""
 	The User object
@@ -133,6 +135,11 @@ class User(usersd.objects.BaseObject):
 			# Verify new passwords
 			if not parent.objects.new_password.get_text() == parent.objects.confirm_password.get_text():
 				parent.show_error("The new passwords do not match.")
+				return False
+			
+			# Check password length
+			if not len(parent.objects.new_password.get_text()) >= MIN_PASSWORD_LENGTH:
+				parent.show_error("The new password should be of at least %s characters." % MIN_PASSWORD_LENGTH)
 				return False
 			
 			parent.hide_error()
