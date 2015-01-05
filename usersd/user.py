@@ -144,6 +144,9 @@ class User(usersd.objects.BaseObject):
 			
 			parent.hide_error()
 			
+			# Finally set password
+			self.change_password(parent.objects.new_password.get_text())
+			
 		# Destroy the window
 		dialog.destroy()
 	
@@ -180,7 +183,7 @@ class User(usersd.objects.BaseObject):
 		splt = None
 		return status
 	
-	def change_password(self, newpassword, oldpassword=None):
+	def change_password(self, newpassword):
 		"""
 		Changes the password.
 		"""
@@ -188,22 +191,12 @@ class User(usersd.objects.BaseObject):
 		with open("/etc/shadow", "r") as f:
 			lines = f.readlines()
 		
-		#
-		#if not oldpassword:
-		#	# New user!
-		#	lines.append(":".join((
-		#		self.user,
-		#		"",
-		#		"",
-		#		
-				
-		
 		with open("/etc/shadow", "w") as f:
 			for line in lines:
 				splt = line.split(":")
 				if splt[0] == self.user:
 					# Change
-					splt[1] = newpassword
+					splt[1] = pwd_context.encrypt(newpassword, scheme=default_encryption)
 				
 				f.write(":".join(splt))
 	
