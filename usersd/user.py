@@ -98,23 +98,16 @@ class User(usersd.objects.BaseObject):
 		This method returns the object path for the given user.
 		"""
 		
-		if self.polkit_policy and not is_authorized(
+		if not get_user(sender) in (0, self.uid) and (self.polkit_policy and not is_authorized(
 			sender,
 			connection,
 			self.polkit_policy,
 			True # user interaction
-		):
+		)):
 			raise Exception("E: Not authorized")
 		
-		# Check user
-		locked = self.is_locked()
-		if not locked and not get_user(sender) in (0, self.uid):
-			# Don't allow other users to change the password unless
-			# the account is locked
-			raise Exception("E: Unable to change the password from another user")
-		
 		# Create changepassword dialog
-		change_password_dialog = usersd.ui.ChangePasswordDialog(locked)
+		change_password_dialog = usersd.ui.ChangePasswordDialog(self.is_locked())
 		
 		# Connect response
 		change_password_dialog.connect("response", self.on_change_password_dialog_response, change_password_dialog)
