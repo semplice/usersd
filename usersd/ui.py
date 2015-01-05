@@ -58,10 +58,12 @@ class ChangePasswordDialog:
 		
 		GObject.idle_add(self.objects.error_revealer.set_reveal_child, False)
 	
-	def __init__(self):
+	def __init__(self, locked=False):
 		"""
 		Initializes the class.
 		"""
+		
+		self.locked = locked
 		
 		# Add buttons
 		self.objects.change_password_dialog.add_buttons(
@@ -71,5 +73,10 @@ class ChangePasswordDialog:
 			Gtk.ResponseType.OK
 		)
 		self.objects.change_password_dialog.set_default_response(Gtk.ResponseType.OK)
+		
+		# Remove 'Old password' requirement if locked
+		if self.locked:
+			self.objects.old_password_label.hide()
+			self.objects.old_password.hide()
 		
 		quickstart.events.connect(self)

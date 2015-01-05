@@ -105,11 +105,14 @@ class User(usersd.objects.BaseObject):
 			raise Exception("E: Not authorized")
 		
 		# Check user
-		if not get_user(sender) in (0, self.uid):
+		locked = self.is_locked()
+		if not locked and not get_user(sender) in (0, self.uid):
+			# Don't allow other users to change the password unless
+			# the account is locked
 			raise Exception("E: Unable to change the password from another user")
 		
 		# Create changepassword dialog
-		change_password_dialog = usersd.ui.ChangePasswordDialog()
+		change_password_dialog = usersd.ui.ChangePasswordDialog(locked)
 		
 		# Connect response
 		change_password_dialog.connect("response", self.on_change_password_dialog_response, change_password_dialog)
@@ -123,7 +126,7 @@ class User(usersd.objects.BaseObject):
 		
 		if response == Gtk.ResponseType.OK:
 			# Verify old password
-			if not self.verify_password(parent.objects.old_password.get_text()):
+			if not parent.locked and not self.verify_password(parent.objects.old_password.get_text()):
 				parent.show_error("Current password is not correct.")
 				return False
 			
@@ -136,6 +139,23 @@ class User(usersd.objects.BaseObject):
 			
 		# Destroy the window
 		dialog.destroy()
+	
+	def is_locked(self):
+		"""
+		Returns True if the user is locked (i.e. it doesn't have a password),
+		False otherwise.
+		"""
+		
+		status = True
+		with open("/etc/shadow", "r") as f:
+			for line in f:
+				splt = line.split(":")
+				if splt[0] == self.user:
+					status = (splt[1] == "!")
+					break
+		
+		splt = None
+		return status
 
 	def verify_password(self, oldpassword):
 		"""
