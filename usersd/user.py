@@ -215,6 +215,9 @@ class User(usersd.objects.BaseObject):
 		self.uid = int(uid)
 		self.gid = int(gid)
 		
+		# Ensure the actual user can write its own properties without authenticating
+		self.set_privileges = [0, self.uid]
+		
 		self.path = "/org/semplicelinux/usersd/user/%s" % uid
 		super().__init__(bus_name)
 	

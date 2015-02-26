@@ -21,7 +21,7 @@
 #    Eugenio "g7" Paolantonio <me@medesimo.eu>
 #
 
-from usersd.common import MainLoop, is_authorized
+from usersd.common import MainLoop, is_authorized, get_user
 
 import dbus
 import dbus.service
@@ -46,10 +46,21 @@ class BaseObject(dbus.service.Object):
 	A base object!
 	"""
 	
+	# The DBus object path
 	path = "/org/semplicelinux/usersd/baseobject"
+	
+	# The DBus interface name
 	interface_name = "org.semplicelinux.usersd.baseobject"
+	
+	# The Polkit policy to use (None to disable authentication)
 	polkit_policy = None
+	
+	# The properties to export to the Bus
 	export_properties = []
+	
+	# The UIDs that can set properties without authentication.
+	# NOTE: Please populate it from the __init__ method of your object!
+	set_privileges = []
 
 	def outside_timeout(*args, **kwargs):
 		"""
@@ -154,12 +165,12 @@ class BaseObject(dbus.service.Object):
 		properties interface.
 		"""
 		
-		if self.polkit_policy and not is_authorized(
+		if not get_user(sender) in self.set_privileges and (self.polkit_policy and not is_authorized(
 			sender,
 			connection,
 			self.polkit_policy,
 			True # user interaction
-		):
+		)):
 			raise Exception("E: Not authorized")
 		
 		self.store_property(property_name, new_value)
