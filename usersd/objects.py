@@ -58,7 +58,7 @@ class BaseObject(dbus.service.Object):
 	# The properties to export to the Bus
 	export_properties = []
 	
-	# The UIDs that can set properties without authentication.
+	# The list of UIDs that can set properties without authentication.
 	# NOTE: Please populate it from the __init__ method of your object!
 	set_privileges = []
 

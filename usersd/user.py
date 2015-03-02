@@ -126,7 +126,7 @@ class User(usersd.objects.BaseObject):
 				return False
 			
 			# Verify new passwords
-			if not parent.objects.new_password.get_text() == parent.objects.confirm_password.get_text():
+			if not parent.objects.new_password.get_text() == parent.objects.confirm_new_password.get_text():
 				parent.show_error("The new passwords do not match.")
 				return False
 			
