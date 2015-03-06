@@ -39,6 +39,16 @@ class Usersd(usersd.objects.BaseObject):
 	
 	path = "/org/semplicelinux/usersd"
 	
+	@dbus.service.signal(
+		"org.semplicelinux.usersd.user"
+	)
+	def UserListChanged(self):
+		"""
+		Signal emitted when the user list has been changed.
+		"""
+		
+		pass
+	
 	def __init__(self):
 		"""
 		Initializes the object.
@@ -66,6 +76,9 @@ class Usersd(usersd.objects.BaseObject):
 						self.bus_name,
 						user.strip()
 					)
+		
+		# Emit signal
+		self.UserListChanged()
 	
 	@usersd.objects.BaseObject.outside_timeout(
 		"org.semplicelinux.usersd.user",
