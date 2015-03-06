@@ -168,7 +168,7 @@ class User(usersd.objects.BaseObject):
 		This method returns the object path for the given user.
 		"""
 		
-		if not get_user(sender) in (0, self.uid) and (self.polkit_policy and not is_authorized(
+		if not get_user(sender) in self.set_privileges and (self.polkit_policy and not is_authorized(
 			sender,
 			connection,
 			self.polkit_policy,
