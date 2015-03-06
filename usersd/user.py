@@ -43,6 +43,7 @@ pwd_context = CryptContext(schemes=[
 default_encryption = "sha512_crypt"
 
 MIN_PASSWORD_LENGTH = 4
+USERNAME_ALLOWED_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789.-"
 
 class User(usersd.objects.BaseObject):
 	"""
@@ -122,9 +123,18 @@ class User(usersd.objects.BaseObject):
 
 			username = parent.objects.username.get_text()
 			
-			# Verify the specified username is unique
+			# Verify that the specified username is unique
 			if username in service._users:
 				parent.show_error("The username '%s' is already taken." % username)
+				return False
+			
+			# Verify that the specified username doesn't contain unallowed chars
+			unallowed = []
+			for char in username:
+				if char not in USERNAME_ALLOWED_CHARS and char not in unallowed:
+					unallowed.append(char)
+			if unallowed:
+				parent.show_error("The username must not contain the following characters: %s" % unallowed)
 				return False
 			
 			# Verify passwords
