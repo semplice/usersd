@@ -120,14 +120,32 @@ class Usersd(usersd.objects.BaseObject):
 			"org.semplicelinux.usersd.add-user",
 			True # user interaction
 		):
-			raise Exception("E: Not authorized")
+			raise Exception("Not authorized")
 		
-		result = usersd.user.User.add(user, fullname)
-		
-		if result:
+		if usersd.user.User.add(user, fullname):
 			# User created successfully, we should refresh the user list
 			self._generate_users()
+	
+	@usersd.objects.BaseObject.outside_timeout(
+		"org.semplicelinux.usersd.user",
+		sender_keyword="sender",
+		connection_keyword="connection"
+	)
+	def ShowUserCreationUI(self, sender, connection):
+		"""
+		This method shows the user interface that permits to create a new
+		user.
+		"""
 		
+		if not is_authorized(
+			sender,
+			connection,
+			"org.semplicelinux.usersd.add-user",
+			True # user interaction
+		):
+			raise Exception("Not authorized")
+		
+		usersd.user.User.add_graphically(self)
 	
 if __name__ == "__main__":
 		

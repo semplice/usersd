@@ -87,6 +87,76 @@ class User(usersd.objects.BaseObject):
 			return True
 		else:
 			return False
+	
+	@staticmethod
+	def add_graphically(service):
+		"""
+		This static method allows the end-user to add a new user account.
+		It differs from the add() method because this one uses a GTK+ Dialog
+		to prompt the user for the required fields.
+		
+		It's useful for distributors who need to implement a graphical user
+		management tool.
+		"""
+		
+		# Create add_user_dialog
+		add_user_dialog = usersd.ui.AddUserDialog()
+		
+		# Connect response
+		add_user_dialog.connect("response", User.on_add_user_dialog_response, add_user_dialog, service)
+		
+		add_user_dialog.show()
+	
+	@staticmethod
+	def on_add_user_dialog_response(dialog, response, parent, service):
+		"""
+		Fired when a button on the add_user_dialog has been clicked.
+		"""
+		
+		if response == Gtk.ResponseType.OK:
+			# Ensure nothing is empty
+			for obj in ("fullname", "username", "password", "confirm_password"):
+				if parent.objects[obj].get_text() == "":
+					parent.show_error("Please complete the entire form.")
+					return False
+
+			username = parent.objects.username.get_text()
+			
+			# Verify the specified username is unique
+			if username in service._users:
+				parent.show_error("The username '%s' is already taken." % username)
+				return False
+			
+			# Verify passwords
+			if not parent.objects.password.get_text() == parent.objects.confirm_password.get_text():
+				parent.show_error("The passwords do not match.")
+				return False
+			
+			# Check password length
+			if not len(parent.objects.password.get_text()) >= MIN_PASSWORD_LENGTH:
+				parent.show_error("The password should be of at least %s characters." % MIN_PASSWORD_LENGTH)
+				return False
+			
+			parent.hide_error()
+						
+			# Add the user
+			if not User.add(username, parent.objects.fullname.get_text()):
+				parent.show_error("Something went wrong while creating the new user.")
+				return False
+						
+			# Refresh
+			service._generate_users()
+			
+			# Lookup for the newly created user
+			if not username in service._users:
+				parent.show_error("Something went wrong while creating the new user.")
+				return False
+			
+			# Set password
+			service._users[username].change_password(parent.objects.password.get_text())
+			
+		# Destroy the window
+		dialog.destroy()
 
 	@usersd.objects.BaseObject.outside_timeout(
 		"org.semplicelinux.usersd.user",
@@ -112,7 +182,7 @@ class User(usersd.objects.BaseObject):
 		# Connect response
 		change_password_dialog.connect("response", self.on_change_password_dialog_response, change_password_dialog)
 		
-		change_password_dialog.run()
+		change_password_dialog.show()
 
 	def on_change_password_dialog_response(self, dialog, response, parent):
 		"""

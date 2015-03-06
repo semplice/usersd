@@ -118,14 +118,12 @@ class AddUserDialog(UI):
 		"""
 		
 		super().__init__()
-
-		self.locked = locked
 		
 		# Add buttons
 		self.objects.add_user_dialog.add_buttons(
 			"Cancel",
 			Gtk.ResponseType.CANCEL,
-			"Change",
+			"Add",
 			Gtk.ResponseType.OK
 		)
 		self.objects.add_user_dialog.set_default_response(Gtk.ResponseType.OK)
