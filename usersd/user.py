@@ -167,6 +167,45 @@ class User(usersd.objects.BaseObject):
 			
 		# Destroy the window
 		dialog.destroy()
+	
+	@usersd.objects.BaseObject.outside_timeout(
+		"org.semplicelinux.usersd.user",
+		in_signature="b",
+		out_signature="b",
+		sender_keyword="sender",
+		connection_keyword="connection"
+	)
+	def DeleteUser(self, with_home, sender, connection):
+		"""
+		Deletes the user.
+		If with_home is True, the user's home directory will be deleted as well.
+		
+		Returns True if the user has been deleted successfully, False if not.
+		"""
+		
+		if get_user(sender) == self.uid:
+			# The sender can't remove itself!
+			raise Exception("The sender can't remove itself!")
+		
+		if self.polkit_policy and not is_authorized(
+			sender,
+			connection,
+			self.polkit_policy,
+			True # user interaction
+		):
+			raise Exception("Not authorized")
+		
+		deluser_call = ["deluser", self.user]
+		
+		# deluser is picky with blank arguments, so we can't put an ""
+		# in the place of --remove-home
+		if with_home:
+			deluser_call.append("--remove-home")
+		
+		if subprocess.call(deluser_call) == 0:
+			return True
+		else:
+			return False
 
 	@usersd.objects.BaseObject.outside_timeout(
 		"org.semplicelinux.usersd.user",
@@ -184,7 +223,7 @@ class User(usersd.objects.BaseObject):
 			self.polkit_policy,
 			True # user interaction
 		)):
-			raise Exception("E: Not authorized")
+			raise Exception("Not authorized")
 		
 		# Create changepassword dialog
 		change_password_dialog = usersd.ui.ChangePasswordDialog(self.is_locked())
