@@ -73,9 +73,21 @@ class Usersd(usersd.objects.BaseObject):
 			for user in f:
 				if not user.split(":")[0] in self._users:
 					self._users[user.split(":")[0]] = usersd.user.User(
+						self,
 						self.bus_name,
 						user.strip()
 					)
+		
+		# Emit signal
+		self.UserListChanged()
+	
+	def remove_from_user_list(self, user):
+		"""
+		Removes the given username from the users list.
+		"""
+		
+		if user in self._users:
+			del self._users[user]
 		
 		# Emit signal
 		self.UserListChanged()

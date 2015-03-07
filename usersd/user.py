@@ -203,6 +203,7 @@ class User(usersd.objects.BaseObject):
 			deluser_call.append("--remove-home")
 		
 		if subprocess.call(deluser_call) == 0:
+			self.service.remove_from_user_list(self.user)
 			return True
 		else:
 			return False
@@ -312,10 +313,12 @@ class User(usersd.objects.BaseObject):
 				
 				f.write(":".join(splt))
 	
-	def __init__(self, bus_name, passwd_entry):
+	def __init__(self, service, bus_name, passwd_entry):
 		"""
 		Initializes the object.
 		"""
+		
+		self.service = service
 		
 		self.user, self.password, uid, gid, infos, self.home, self.shell = passwd_entry.split(":")
 		
