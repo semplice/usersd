@@ -22,15 +22,7 @@
 #
 
 import usersd.objects
-import usersd.ui
 import subprocess
-
-from usersd.common import is_authorized, get_user
-
-from gi.repository import Gtk
-
-MIN_PASSWORD_LENGTH = 4
-USERNAME_ALLOWED_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789.-"
 
 class Group(usersd.objects.BaseObject):
 	"""
