@@ -26,7 +26,7 @@ import subprocess
 
 class Group(usersd.objects.BaseObject):
 	"""
-	The User object
+	The Group object
 	"""
 	
 	interface_name = "org.semplicelinux.usersd.group"
@@ -53,6 +53,13 @@ class Group(usersd.objects.BaseObject):
 		
 		self.path = "/org/semplicelinux/usersd/group/%s" % gid
 		super().__init__(bus_name)
+	
+	def refresh_members_from_group_entry(self, group_entry):
+		"""
+		Refreshes the members list from a group_entry line.
+		"""
+		
+		self.members = group_entry.split(":")[-1].split(",")
 	
 	def store_property(self, name, value):
 		"""

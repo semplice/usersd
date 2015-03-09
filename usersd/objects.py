@@ -148,7 +148,7 @@ class BaseObject(dbus.service.Object):
 			
 			return result
 		else:
-			raise dbus.exception.DBusException(
+			raise Exception(
 				"org.semplicelinux.usersd.UnknownInterface",
 				"The object does not implement the %s interface" % interface_name
 			)

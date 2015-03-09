@@ -64,39 +64,47 @@ class Usersd(usersd.objects.BaseObject):
 		
 		self._users = {}
 		self._groups = {}
-		self._generate_users()
+		self._generate_users(refresh_groups=False)
 		self._generate_groups()
 	
-	def _generate_users(self):
+	def _generate_users(self, refresh_groups=True):
 		"""
 		Generates a user object for every user in /etc/passwd.
 		"""
 				
 		with open("/etc/passwd", "r") as f:
 			for user in f:
-				if not user.split(":")[0] in self._users:
-					self._users[user.split(":")[0]] = usersd.user.User(
+				name = user.split(":")[0]
+				if not name in self._users:
+					self._users[name] = usersd.user.User(
 						self,
 						self.bus_name,
 						user.strip()
 					)
 		
+		# Refresh groups if asked to
+		if refresh_groups:
+			self._generate_groups()
+		
 		# Emit signal
 		self.UserListChanged()
 	
-	def _generate_groups(self):
+	def _generate_groups(self, refresh=False):
 		"""
 		Generates a group object for every group in /etc/group.
 		"""
 		
 		with open("/etc/group", "r") as f:
 			for group in f:
-				if not group.split(":")[0] in self._groups:
-					self._groups[group.split(":")[0]] = usersd.group.Group(
+				name = group.split(":")[0]
+				if not name in self._groups:
+					self._groups[name] = usersd.group.Group(
 						self,
 						self.bus_name,
 						group.strip()
 					)
+				elif refresh:
+					self._groups[name].refresh_members_from_group_entry(group.strip())
 	
 	def remove_from_user_list(self, user):
 		"""
@@ -105,6 +113,9 @@ class Usersd(usersd.objects.BaseObject):
 		
 		if user in self._users:
 			del self._users[user]
+
+		# Refresh groups
+		self._generate_groups(refresh=True)
 		
 		# Emit signal
 		self.UserListChanged()
