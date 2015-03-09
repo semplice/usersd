@@ -29,6 +29,7 @@ from usersd.common import MainLoop, is_authorized
 import usersd.ui
 import usersd.objects
 import usersd.user
+import usersd.group
 
 from dbus.mainloop.glib import DBusGMainLoop
 
@@ -62,8 +63,10 @@ class Usersd(usersd.objects.BaseObject):
 		super().__init__(self.bus_name)
 		
 		self._users = {}
+		self._groups = {}
 		self._generate_users()
-			
+		self._generate_groups()
+	
 	def _generate_users(self):
 		"""
 		Generates a user object for every user in /etc/passwd.
@@ -81,6 +84,20 @@ class Usersd(usersd.objects.BaseObject):
 		# Emit signal
 		self.UserListChanged()
 	
+	def _generate_groups(self):
+		"""
+		Generates a group object for every group in /etc/group.
+		"""
+		
+		with open("/etc/group", "r") as f:
+			for group in f:
+				if not group.split(":")[0] in self._groups:
+					self._groups[group.split(":")[0]] = usersd.group.Group(
+						self,
+						self.bus_name,
+						group.strip()
+					)
+	
 	def remove_from_user_list(self, user):
 		"""
 		Removes the given username from the users list.
@@ -91,7 +108,42 @@ class Usersd(usersd.objects.BaseObject):
 		
 		# Emit signal
 		self.UserListChanged()
-	
+
+	@usersd.objects.BaseObject.outside_timeout(
+		"org.semplicelinux.usersd.group",
+		out_signature="a{i(s)}",
+		sender_keyword="sender",
+		connection_keyword="connection"
+	)
+	def GetGroups(self, sender, connection):
+		"""
+		This method returns a dictionary containing every group's GID as keys,
+		and the groupname as values.
+		"""
+		
+		result = {}
+					
+		for group, obj in self._groups.items():
+			result[obj.gid] = (group,)
+		
+		return result
+
+	@usersd.objects.BaseObject.outside_timeout(
+		"org.semplicelinux.usersd.group",
+		in_signature="s",
+		out_signature="s",
+		sender_keyword="sender",
+		connection_keyword="connection"
+	)
+	def LookupGroup(self, group, sender, connection):
+		"""
+		This method returns the object path for the given group.
+		"""
+		
+		if group in self._groups: return self._groups[group].path
+		
+		return None
+
 	@usersd.objects.BaseObject.outside_timeout(
 		"org.semplicelinux.usersd.user",
 		out_signature="a{i(sss)}",
