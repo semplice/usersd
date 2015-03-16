@@ -142,6 +142,27 @@ class Usersd(usersd.objects.BaseObject):
 	@usersd.objects.BaseObject.outside_timeout(
 		"org.semplicelinux.usersd.group",
 		in_signature="s",
+		out_signature="as",
+		sender_keyword="sender",
+		connection_keyword="connection"
+	)
+	def GetGroupsForUser(self, user, sender, connection):
+		"""
+		This method returns an array containing every group the given
+		user is in.
+		"""
+		
+		result = []
+					
+		for group, obj in self._groups.items():
+			if user in obj.members:
+				result.append(group)
+		
+		return result
+
+	@usersd.objects.BaseObject.outside_timeout(
+		"org.semplicelinux.usersd.group",
+		in_signature="s",
 		out_signature="s",
 		sender_keyword="sender",
 		connection_keyword="connection"
