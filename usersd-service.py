@@ -175,6 +175,45 @@ class Usersd(usersd.objects.BaseObject):
 		if group in self._groups: return self._groups[group].path
 		
 		return None
+	
+	# NOTE: The following method needs to be properly security-audited
+	# before we can export it to DBus.
+	# For now is only meant to be used internally when creating an user.
+	# You can take advantage of that using the ShowUserCreationUI method.
+	#
+	#@usersd.objects.BaseObject.outside_timeout(
+	#	"org.semplicelinux.usersd.user",
+	#	in_signature="sas",
+	#	sender_keyword="sender",
+	#	connection_keyword="connection"
+	#)
+	def AddGroupsToUser(self, user, groups, sender=None, connection=None):
+		"""
+		Adds the given user to every group specified in the specfied
+		groups list.
+		"""
+		
+		if sender and connection and not is_authorized(
+			sender,
+			connection,
+			"org.semplicelinux.usersd.add-user",
+			True # user interaction
+		):
+			raise Exception("Not authorized")
+		
+		for group in groups:
+			if not group in self._groups:
+				continue
+			
+			members = self._groups[group].members
+			if not user in members:
+				members.append(user)
+			
+				self._groups[group].Set(
+					"org.semplicelinux.usersd.group",
+					"Members",
+					members
+				)
 
 	@usersd.objects.BaseObject.outside_timeout(
 		"org.semplicelinux.usersd.user",
@@ -237,10 +276,11 @@ class Usersd(usersd.objects.BaseObject):
 	
 	@usersd.objects.BaseObject.outside_timeout(
 		"org.semplicelinux.usersd.user",
+		in_signature="as",
 		sender_keyword="sender",
 		connection_keyword="connection"
 	)
-	def ShowUserCreationUI(self, sender, connection):
+	def ShowUserCreationUI(self, groups, sender, connection):
 		"""
 		This method shows the user interface that permits to create a new
 		user.
@@ -254,7 +294,7 @@ class Usersd(usersd.objects.BaseObject):
 		):
 			raise Exception("Not authorized")
 		
-		usersd.user.User.add_graphically(self)
+		usersd.user.User.add_graphically(self, groups)
 	
 if __name__ == "__main__":
 		

@@ -90,7 +90,7 @@ class User(usersd.objects.BaseObject):
 			return False
 	
 	@staticmethod
-	def add_graphically(service):
+	def add_graphically(service, groups=[]):
 		"""
 		This static method allows the end-user to add a new user account.
 		It differs from the add() method because this one uses a GTK+ Dialog
@@ -104,12 +104,12 @@ class User(usersd.objects.BaseObject):
 		add_user_dialog = usersd.ui.AddUserDialog()
 		
 		# Connect response
-		add_user_dialog.connect("response", User.on_add_user_dialog_response, add_user_dialog, service)
+		add_user_dialog.connect("response", User.on_add_user_dialog_response, add_user_dialog, service, groups)
 		
 		add_user_dialog.show()
 	
 	@staticmethod
-	def on_add_user_dialog_response(dialog, response, parent, service):
+	def on_add_user_dialog_response(dialog, response, parent, service, groups):
 		"""
 		Fired when a button on the add_user_dialog has been clicked.
 		"""
@@ -153,7 +153,10 @@ class User(usersd.objects.BaseObject):
 			if not User.add(username, parent.objects.fullname.get_text()):
 				parent.show_error("Something went wrong while creating the new user.")
 				return False
-						
+			
+			# Add the user to the specified default groups
+			service.AddGroupsToUser(username, groups)
+			
 			# Refresh
 			service._generate_users()
 			

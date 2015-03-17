@@ -159,13 +159,13 @@ class BaseObject(dbus.service.Object):
 		sender_keyword="sender",
 		connection_keyword="connection"
 	)
-	def Set(self, interface_name, property_name, new_value, sender, connection):
+	def Set(self, interface_name, property_name, new_value, sender=None, connection=None):
 		"""
 		An implementation of the Set() method of the
 		properties interface.
 		"""
 		
-		if not get_user(sender) in self.set_privileges and (self.polkit_policy and not is_authorized(
+		if sender and connection and not get_user(sender) in self.set_privileges and (self.polkit_policy and not is_authorized(
 			sender,
 			connection,
 			self.polkit_policy,
