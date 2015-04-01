@@ -89,7 +89,7 @@ class LoopWithTimeout():
 		Fired when the timeout elapsed.
 		"""
 		
-		#self.quit()
+		self.quit()
 		
 		return False
 	
