@@ -22,16 +22,33 @@
 #    Eugenio "g7" Paolantonio <me@medesimo.eu>
 #
 
+import os
+
 import dbus
 
 from usersd.common import MainLoop, is_authorized
 
-import usersd.ui
 import usersd.objects
 import usersd.user
 import usersd.group
 
 from dbus.mainloop.glib import DBusGMainLoop
+
+if os.path.islink(__file__):
+	# If we are a link, everything is a WTF...
+	USERSD_DIR = os.path.dirname(os.path.normpath(os.path.join(os.path.dirname(__file__), os.readlink(__file__))))
+else:
+	USERSD_DIR = os.path.dirname(__file__)
+
+
+# While the following is not ideal, is currently needed to make sure
+# we are actually on the main vera-control-center directory.
+# The main executable (this) and all modules do not use absolute paths
+# to load the glade UI files, so we need to be on the main directory
+# otherwise they will crash.
+# This should be probably addressed directly in quickstart.builder but,
+# for now, this chdir call will do the job.
+os.chdir(USERSD_DIR)
 
 class Usersd(usersd.objects.BaseObject):
 	"""
@@ -214,6 +231,19 @@ class Usersd(usersd.objects.BaseObject):
 					"Members",
 					members
 				)
+	
+	def get_uids_with_users(self):
+		"""
+		A variant of the self._users dictionary, with UIDs as keys.
+		"""
+		
+		result = {}
+		
+		for user, obj in self._users.items():
+			
+			result[obj.uid] = obj
+		
+		return result
 
 	@usersd.objects.BaseObject.outside_timeout(
 		"org.semplicelinux.usersd.user",
@@ -276,11 +306,11 @@ class Usersd(usersd.objects.BaseObject):
 	
 	@usersd.objects.BaseObject.outside_timeout(
 		"org.semplicelinux.usersd.user",
-		in_signature="as",
+		in_signature="sas",
 		sender_keyword="sender",
 		connection_keyword="connection"
 	)
-	def ShowUserCreationUI(self, groups, sender, connection):
+	def ShowUserCreationUI(self, display, groups, sender, connection):
 		"""
 		This method shows the user interface that permits to create a new
 		user.
@@ -294,7 +324,7 @@ class Usersd(usersd.objects.BaseObject):
 		):
 			raise Exception("Not authorized")
 		
-		usersd.user.User.add_graphically(self, groups)
+		usersd.user.User.add_graphically(sender, self, display, groups)
 	
 if __name__ == "__main__":
 		

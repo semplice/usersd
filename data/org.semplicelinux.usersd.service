@@ -1,4 +1,4 @@
 [D-BUS Service]
-Name=org.semplicelinux.vera.powermanager
-Exec=/usr/bin/vera-power-manager.py
+Name=org.semplicelinux.usersd
+Exec=/usr/share/usersd/usersd-service.py
 User=root

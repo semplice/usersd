@@ -21,11 +21,50 @@
 #    Eugenio "g7" Paolantonio <me@medesimo.eu>
 #
 
+import os
+
 import dbus
+
+import importlib
 
 from gi.repository import GLib, Polkit
 
 authority = Polkit.Authority.get_sync()
+
+class ModuleProxy:
+	"""
+	Transparent proxy to a python module.
+	
+	This proxy loads the specified module only when another object tries
+	to access it, and not on load.
+	"""
+	
+	_real = None
+	
+	def _initialize(self, display, user, dct):
+		"""
+		Initializes core variables to access the current user's display.
+		"""
+		
+		os.environ["XAUTHORITY"] = os.path.join(dct[user].home, ".Xauthority")
+		os.environ["DISPLAY"] = display
+	
+	def __init__(self, module):
+		"""
+		Initializes the class.
+		"""
+		
+		self.module = module
+	
+	def __getattr__(self, attr):
+		"""
+		Where the magic happens.
+		"""
+		
+		if not self._real:
+			self._real = importlib.import_module(self.module)
+		
+		return getattr(self._real, attr)
 
 class LoopWithTimeout():
 	"""
@@ -126,3 +165,6 @@ def is_authorized(sender, connection, privilege, user_interaction=True):
 	return result.get_is_authorized()
 
 MainLoop = LoopWithTimeout(5 * 60)
+
+usersd_ui = ModuleProxy("usersd.ui")
+Gtk = ModuleProxy("gi.repository.Gtk")

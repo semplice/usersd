@@ -22,12 +22,11 @@
 #
 
 import usersd.objects
-import usersd.ui
 import subprocess
 
 from usersd.common import is_authorized, get_user
 
-from gi.repository import Gtk
+from usersd.common import Gtk, usersd_ui
 
 from passlib.context import CryptContext
 
@@ -90,7 +89,7 @@ class User(usersd.objects.BaseObject):
 			return False
 	
 	@staticmethod
-	def add_graphically(service, groups=[]):
+	def add_graphically(sender, service, display, groups=[]):
 		"""
 		This static method allows the end-user to add a new user account.
 		It differs from the add() method because this one uses a GTK+ Dialog
@@ -101,7 +100,8 @@ class User(usersd.objects.BaseObject):
 		"""
 		
 		# Create add_user_dialog
-		add_user_dialog = usersd.ui.AddUserDialog()
+		usersd_ui._initialize(display, get_user(sender), service.get_uids_with_users())
+		add_user_dialog = usersd_ui.AddUserDialog()
 		
 		# Connect response
 		add_user_dialog.connect("response", User.on_add_user_dialog_response, add_user_dialog, service, groups)
@@ -213,10 +213,11 @@ class User(usersd.objects.BaseObject):
 
 	@usersd.objects.BaseObject.outside_timeout(
 		"org.semplicelinux.usersd.user",
+		in_signature="s",
 		sender_keyword="sender",
 		connection_keyword="connection"
 	)
-	def ChangePassword(self, sender, connection):
+	def ChangePassword(self, display, sender, connection):
 		"""
 		This method returns the object path for the given user.
 		"""
@@ -230,7 +231,8 @@ class User(usersd.objects.BaseObject):
 			raise Exception("Not authorized")
 		
 		# Create changepassword dialog
-		change_password_dialog = usersd.ui.ChangePasswordDialog(self.is_locked())
+		usersd_ui._initialize(display, get_user(sender), self.service.get_uids_with_users())
+		change_password_dialog = usersd_ui.ChangePasswordDialog(self.is_locked())
 		
 		# Connect response
 		change_password_dialog.connect("response", self.on_change_password_dialog_response, change_password_dialog)
