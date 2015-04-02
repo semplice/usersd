@@ -169,7 +169,7 @@ setup(
 		"install": CustomInstall
 	},
 	name=APP_NAME,
-	version='0.90.1',
+	version='0.90.2',
 	description='User management daemon.',
 	author='Eugenio Paolantonio',
 	author_email='me@medesimo.eu',
