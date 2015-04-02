@@ -77,7 +77,7 @@ class User(usersd.objects.BaseObject):
 		"""
 		
 		if subprocess.call((
-			"useradd",
+			"/usr/sbin/useradd",
 			user,
 			"-m", # Create home directory
 			"-U", # Create user group
