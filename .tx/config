@@ -1,0 +1,9 @@
+[main]
+host = https://www.transifex.com
+
+[usersd.main]
+file_filter = po/usersd/<lang>.po
+source_file = po/usersd/usersd.pot
+source_lang = en
+type = PO
+

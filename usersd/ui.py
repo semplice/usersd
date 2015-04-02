@@ -93,9 +93,9 @@ class ChangePasswordDialog(UI):
 		
 		# Add buttons
 		self.objects.change_password_dialog.add_buttons(
-			"Cancel",
+			_("_Cancel"),
 			Gtk.ResponseType.CANCEL,
-			"Change",
+			_("Ch_ange"),
 			Gtk.ResponseType.OK
 		)
 		self.objects.change_password_dialog.set_default_response(Gtk.ResponseType.OK)
@@ -121,9 +121,9 @@ class AddUserDialog(UI):
 		
 		# Add buttons
 		self.objects.add_user_dialog.add_buttons(
-			"Cancel",
+			_("_Cancel"),
 			Gtk.ResponseType.CANCEL,
-			"Add",
+			_("_Add"),
 			Gtk.ResponseType.OK
 		)
 		self.objects.add_user_dialog.set_default_response(Gtk.ResponseType.OK)

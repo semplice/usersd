@@ -32,6 +32,8 @@ import usersd.objects
 import usersd.user
 import usersd.group
 
+import quickstart.translations
+
 from dbus.mainloop.glib import DBusGMainLoop
 
 if os.path.islink(__file__):
@@ -49,6 +51,18 @@ else:
 # This should be probably addressed directly in quickstart.builder but,
 # for now, this chdir call will do the job.
 os.chdir(USERSD_DIR)
+
+# Parse default locale from /etc/default/locale
+try:
+	with open("/etc/default/locale", "r") as f:
+		os.environ["LANG"] = f.readline().strip().split("=")[-1]
+except:
+	pass
+
+TRANSLATION = quickstart.translations.Translation("usersd")
+TRANSLATION.load()
+TRANSLATION.install()
+TRANSLATION.bind_also_locale()
 
 class Usersd(usersd.objects.BaseObject):
 	"""

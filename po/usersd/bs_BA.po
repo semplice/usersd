@@ -1,0 +1,111 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+msgid ""
+msgstr ""
+"Project-Id-Version: usersd\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-04-02 13:37+0200\n"
+"PO-Revision-Date: 2015-04-02 11:37+0000\n"
+"Last-Translator: g7 <me@medesimo.eu>\n"
+"Language-Team: Bosnian (Bosnia and Herzegovina) (http://www.transifex.com/projects/p/usersd/language/bs_BA/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: bs_BA\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: usersd/user.py:121
+msgid "Please complete the entire form."
+msgstr ""
+
+#: usersd/user.py:128
+#, python-format
+msgid "The username '%s' is already taken."
+msgstr ""
+
+#: usersd/user.py:137
+#, python-format
+msgid "The username must not contain the following characters: %s"
+msgstr ""
+
+#: usersd/user.py:142
+msgid "The passwords do not match."
+msgstr ""
+
+#: usersd/user.py:147
+#, python-format
+msgid "The password should be of at least %s characters."
+msgstr ""
+
+#: usersd/user.py:154 usersd/user.py:165
+msgid "Something went wrong while creating the new user."
+msgstr ""
+
+#: usersd/user.py:250
+msgid "Current password is not correct."
+msgstr ""
+
+#: usersd/user.py:255
+msgid "The new passwords do not match."
+msgstr ""
+
+#: usersd/user.py:260
+#, python-format
+msgid "The new password should be of at least %s characters."
+msgstr ""
+
+#: usersd/ui.py:96 usersd/ui.py:124 build/lib/usersd/ui.py:96
+#: build/lib/usersd/ui.py:124
+msgid "_Cancel"
+msgstr ""
+
+#: usersd/ui.py:98 build/lib/usersd/ui.py:98
+msgid "Ch_ange"
+msgstr ""
+
+#: usersd/ui.py:126 build/lib/usersd/ui.py:126
+msgid "_Add"
+msgstr ""
+
+#: usersd/usersd.glade.h:1
+msgid "Add a new user"
+msgstr ""
+
+#: usersd/usersd.glade.h:2
+msgid "Error message"
+msgstr ""
+
+#: usersd/usersd.glade.h:3
+msgid "Full name"
+msgstr ""
+
+#: usersd/usersd.glade.h:4
+msgid "Password"
+msgstr ""
+
+#: usersd/usersd.glade.h:5
+msgid "Password (confirm)"
+msgstr ""
+
+#: usersd/usersd.glade.h:6
+msgid "Username"
+msgstr ""
+
+#: usersd/usersd.glade.h:7
+msgid "Change password"
+msgstr ""
+
+#: usersd/usersd.glade.h:8
+msgid "Old password"
+msgstr ""
+
+#: usersd/usersd.glade.h:9
+msgid "New password"
+msgstr ""
+
+#: usersd/usersd.glade.h:10
+msgid "New password (confirm)"
+msgstr ""

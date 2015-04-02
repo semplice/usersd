@@ -1,0 +1,112 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+# g7 <me@medesimo.eu>, 2015
+msgid ""
+msgstr ""
+"Project-Id-Version: usersd\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-04-02 13:37+0200\n"
+"PO-Revision-Date: 2015-04-02 11:42+0000\n"
+"Last-Translator: g7 <me@medesimo.eu>\n"
+"Language-Team: Italian (http://www.transifex.com/projects/p/usersd/language/it/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: it\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: usersd/user.py:121
+msgid "Please complete the entire form."
+msgstr "Si prega di completare tutti i campi."
+
+#: usersd/user.py:128
+#, python-format
+msgid "The username '%s' is already taken."
+msgstr "Il nome utente '%s' già esiste."
+
+#: usersd/user.py:137
+#, python-format
+msgid "The username must not contain the following characters: %s"
+msgstr "Il nome utente non deve contenere i seguenti caratteri: %s"
+
+#: usersd/user.py:142
+msgid "The passwords do not match."
+msgstr "Le password non corrispondono."
+
+#: usersd/user.py:147
+#, python-format
+msgid "The password should be of at least %s characters."
+msgstr "La password deve essere di almeno %s caratteri."
+
+#: usersd/user.py:154 usersd/user.py:165
+msgid "Something went wrong while creating the new user."
+msgstr "Qualcosa è andato storto durante la creazione del nuovo utente."
+
+#: usersd/user.py:250
+msgid "Current password is not correct."
+msgstr "La password attuale non è corretta."
+
+#: usersd/user.py:255
+msgid "The new passwords do not match."
+msgstr "Le nuove password non corrispondono."
+
+#: usersd/user.py:260
+#, python-format
+msgid "The new password should be of at least %s characters."
+msgstr "La nuova password deve essere di almeno %s caratteri."
+
+#: usersd/ui.py:96 usersd/ui.py:124 build/lib/usersd/ui.py:96
+#: build/lib/usersd/ui.py:124
+msgid "_Cancel"
+msgstr "_Annulla"
+
+#: usersd/ui.py:98 build/lib/usersd/ui.py:98
+msgid "Ch_ange"
+msgstr "_Modifica"
+
+#: usersd/ui.py:126 build/lib/usersd/ui.py:126
+msgid "_Add"
+msgstr "_Aggiungi"
+
+#: usersd/usersd.glade.h:1
+msgid "Add a new user"
+msgstr "Aggiungi un nuovo utente"
+
+#: usersd/usersd.glade.h:2
+msgid "Error message"
+msgstr "Messaggio di errore"
+
+#: usersd/usersd.glade.h:3
+msgid "Full name"
+msgstr "Nome completo"
+
+#: usersd/usersd.glade.h:4
+msgid "Password"
+msgstr "Password"
+
+#: usersd/usersd.glade.h:5
+msgid "Password (confirm)"
+msgstr "Password (conferma)"
+
+#: usersd/usersd.glade.h:6
+msgid "Username"
+msgstr "Nome utente"
+
+#: usersd/usersd.glade.h:7
+msgid "Change password"
+msgstr "Cambia password"
+
+#: usersd/usersd.glade.h:8
+msgid "Old password"
+msgstr "Vecchia password"
+
+#: usersd/usersd.glade.h:9
+msgid "New password"
+msgstr "Nuova password"
+
+#: usersd/usersd.glade.h:10
+msgid "New password (confirm)"
+msgstr "Nuova password (conferma)"

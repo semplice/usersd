@@ -118,14 +118,14 @@ class User(usersd.objects.BaseObject):
 			# Ensure nothing is empty
 			for obj in ("fullname", "username", "password", "confirm_password"):
 				if parent.objects[obj].get_text() == "":
-					parent.show_error("Please complete the entire form.")
+					parent.show_error(_("Please complete the entire form."))
 					return False
 
 			username = parent.objects.username.get_text()
 			
 			# Verify that the specified username is unique
 			if username in service._users:
-				parent.show_error("The username '%s' is already taken." % username)
+				parent.show_error(_("The username '%s' is already taken.") % username)
 				return False
 			
 			# Verify that the specified username doesn't contain unallowed chars
@@ -134,24 +134,24 @@ class User(usersd.objects.BaseObject):
 				if char not in USERNAME_ALLOWED_CHARS and char not in unallowed:
 					unallowed.append(char)
 			if unallowed:
-				parent.show_error("The username must not contain the following characters: %s" % unallowed)
+				parent.show_error(_("The username must not contain the following characters: %s") % unallowed)
 				return False
 			
 			# Verify passwords
 			if not parent.objects.password.get_text() == parent.objects.confirm_password.get_text():
-				parent.show_error("The passwords do not match.")
+				parent.show_error(_("The passwords do not match."))
 				return False
 			
 			# Check password length
 			if not len(parent.objects.password.get_text()) >= MIN_PASSWORD_LENGTH:
-				parent.show_error("The password should be of at least %s characters." % MIN_PASSWORD_LENGTH)
+				parent.show_error(_("The password should be of at least %s characters.") % MIN_PASSWORD_LENGTH)
 				return False
 			
 			parent.hide_error()
 						
 			# Add the user
 			if not User.add(username, parent.objects.fullname.get_text()):
-				parent.show_error("Something went wrong while creating the new user.")
+				parent.show_error(_("Something went wrong while creating the new user."))
 				return False
 			
 			# Add the user to the specified default groups
@@ -162,7 +162,7 @@ class User(usersd.objects.BaseObject):
 			
 			# Lookup for the newly created user
 			if not username in service._users:
-				parent.show_error("Something went wrong while creating the new user.")
+				parent.show_error(_("Something went wrong while creating the new user."))
 				return False
 			
 			# Set password
@@ -247,17 +247,17 @@ class User(usersd.objects.BaseObject):
 		if response == Gtk.ResponseType.OK:
 			# Verify old password
 			if not parent.locked and not self.verify_password(parent.objects.old_password.get_text()):
-				parent.show_error("Current password is not correct.")
+				parent.show_error(_("Current password is not correct."))
 				return False
 			
 			# Verify new passwords
 			if not parent.objects.new_password.get_text() == parent.objects.confirm_new_password.get_text():
-				parent.show_error("The new passwords do not match.")
+				parent.show_error(_("The new passwords do not match."))
 				return False
 			
 			# Check password length
 			if not len(parent.objects.new_password.get_text()) >= MIN_PASSWORD_LENGTH:
-				parent.show_error("The new password should be of at least %s characters." % MIN_PASSWORD_LENGTH)
+				parent.show_error(_("The new password should be of at least %s characters.") % MIN_PASSWORD_LENGTH)
 				return False
 			
 			parent.hide_error()
