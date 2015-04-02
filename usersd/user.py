@@ -198,7 +198,7 @@ class User(usersd.objects.BaseObject):
 		):
 			raise Exception("Not authorized")
 		
-		deluser_call = ["deluser", self.user]
+		deluser_call = ["/usr/sbin/deluser", self.user]
 		
 		# deluser is picky with blank arguments, so we can't put an ""
 		# in the place of --remove-home
