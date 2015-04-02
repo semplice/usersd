@@ -35,7 +35,7 @@ class Group(usersd.objects.BaseObject):
 		"gid",
 		"members",
 	]
-	polkit_policy = "org.semplicelinux.usersd.modify-user"
+	polkit_policy = "org.semplicelinux.usersd.modify-group"
 	
 	def __init__(self, service, bus_name, group_entry):
 		"""
