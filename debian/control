@@ -1,0 +1,19 @@
+Source: usersd
+Section: admin
+Priority: optional
+Maintainer: Eugenio Paolantonio (g7) <me@medesimo.eu>
+Build-Depends: dh-python, python3-all (>= 3.1.2-7~), debhelper (>= 8.0.0)
+X-Python3-Version: >= 3.2
+Standards-Version: 3.9.5
+Homepage: https://github.com/semplice/usersd
+Vcs-Git: git://github.com/semplice/usersd.git
+Vcs-Browser: https://github.com/semplice/usersd
+
+Package: usersd
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends}, python3-gi, gir1.2-glib-2.0,
+ ${python:Depends}, python3-dbus, gir1.2-polkit-1.0, python3-quickstart,
+ python3-passlib
+Description: DBus interface to user management
+ usersd is a DBus activatable service that permits to manage and create
+ users and groups.
